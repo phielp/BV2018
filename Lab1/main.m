@@ -1,10 +1,10 @@
-%% Exercise 1
-
 function main()
-
+    %% Exercise 1
     close all
     img = im2double(imread('cameraman.tif'));
-
+    imageAutumn = imread ( 'autumn .tif' );
+    imageAutumn = im2double ( rgb2gray (imageAutumn) );
+    
     %% Question 2.1.1 / Question 2.1.2
     % Check out the implementation of
     % pixelValue(image, x, y, interpolationMethod, borderMethod)
@@ -13,8 +13,8 @@ function main()
     % Comparement of (bi)linear and nearest profile.
     figure('name', 'Interpolation Profiles (nearest:b vs. linear:r)')
     hold on;
-    plot(myProfile(img, 100, 100, 120, 120, 200, 'nearest', 'constant'), 'b');
-    plot(myProfile(img, 100, 100, 120, 120, 200, 'linear', 'constant'), 'r');
+    plot(myProfile(imageAutumn, 100, 100, 120, 120, 200, 'nearest', 'constant'), 'b');
+    plot(myProfile(imageAutumn, 100, 100, 120, 120, 200, 'linear', 'constant'), 'r');
     hold off;
     
     %% Question 2.1.4
@@ -30,7 +30,7 @@ function main()
     %% Question 3.1.1 / Question 3.1.2
     % See the implementation of 
     % rotateImage(image, angle, interpolationMethod, borderMethod, addMargins)
-    rotatedImage = rotateImage(img, pi/6, 'linear');
+    rotatedImage = rotateImage(img, deg2rad(45), 'linear');
     figure('name', 'Q3.1.2 / Q3.1.2 : pi/6 angle')
     imshow(rotatedImage)
     
@@ -63,24 +63,25 @@ function main()
     % the image is measured using Euclidean distance.
     imgNearest = rotateImage(img, pi/4, 'nearest', 'constant', true);
     imgNearest = rotateImage(imgNearest, -pi/4, 'nearest');
-    figure('name', 'Image after double rotation w/ nearest interpolation')
-    imshow(imgNearest)
     
     imgLinear = rotateImage(img, pi/4, 'linear', 'constant', true);
     imgLinear = rotateImage(imgLinear, -pi/4, 'linear');
-    figure('name', 'Image after double rotation w/ linear interpolation')
-    imshow(imgLinear)
  
     borderedImage = borderImage(img, pi/4);
-    figure('name', 'Image w/ border')
-    imshow(borderedImage)
     
     distNearest = euclideanDistance(borderedImage, imgNearest);
     distLinear = euclideanDistance(borderedImage, imgLinear);
-    distDiff = abs(distNearest - distLinear);
 
-    fprintf('Distance (nearest): %f; distance (linear): %f, distance difference: %f\n', ...
-        distNearest, distLinear, distDiff);
+    disp('Nearest distance to original')
+    disp(distNearest)
+    disp('Linear distance to original')
+    disp(distLinear)
+    
+    % At first it is not what we expect, since nearest neighbour has less
+    % distance to the original image then linear. However, this makes more
+    % sense if we realise that linear will always guess somewhere in the
+    % middle of the value. Meaning it will be off a little more with
+    % distance but for the image as a whole will be better.
    
     %% Question 4.1.1 / 4.1.3
     % Check out the implementation of

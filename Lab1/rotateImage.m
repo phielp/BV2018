@@ -14,7 +14,7 @@ function rotatedImage = rotateImage(image, angle, ...
     if ~exist('addMargins', 'var'), addMargins = false; end
     if addMargins
         [m, n, topMargin, leftMargin] = imageRotationMargins(image, angle);
-    else;
+    else
         [m, n] = size(image);
         topMargin = 0;
         leftMargin = 0;
