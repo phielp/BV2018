@@ -131,8 +131,13 @@ function main()
      figure;
      imshow('attachments/calibrationpoints.jpg')
      hold on;
-     
-     cube = createCube(1, [0,0,0]);
-     newCube = transformCube(M, cube);
-     subPlotFaces(newCube)
+     cube1 = createCube(1, [0,0,0]);
+     cube2 = createCube(1, [0, 7, 6]);
+     cube3 = createCube(1, [5.5,0,3]);
+     newCube1 = transformCube(M, cube1);
+     newCube2 = transformCube(M, cube2);
+     newCube3 = transformCube(M, cube3);
+     subPlotFaces(newCube1)
+     subPlotFaces(newCube2)
+     subPlotFaces(newCube3)
      
