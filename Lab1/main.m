@@ -120,4 +120,19 @@ function main()
              400, 'linear');
     imshow(transformedFlyers)
     
+    %% Question 7.1.1/7.1.2
+     XYZ = [];
+     xz = [];
+     load('calibrationpoints.mat');
+     M = estimateProjectionMatrix(xy, XYZ);
+     disp(M)
   
+     %% Question 8.1.1
+     figure;
+     imshow('attachments/calibrationpoints.jpg')
+     hold on;
+     
+     cube = createCube(1, [0,0,0]);
+     newCube = transformCube(M, cube);
+     subPlotFaces(newCube)
+     
