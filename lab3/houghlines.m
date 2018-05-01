@@ -1,4 +1,4 @@
-function houghlines (im , h, thresh )
+function [lines] = houghlines (im , h, thresh )
     % HOUGHLINES
     %
     % Function takes an image and its Hough transform , finds the
@@ -25,7 +25,10 @@ function houghlines (im , h, thresh )
     h(h < thresh) = 0;
     
     % Create label connected regions
-    nregions = bwlabel(h);
+    [bwl, nregions] = bwlabel(h);
+    
+    % Create empty lines 
+    lines = zeros(nregions, 3);
     
     for n = 1: nregions
         % Form a mask for each individual region .
@@ -41,7 +44,15 @@ function houghlines (im , h, thresh )
         rho = drho * (rhoindex - nrho / 2);
         theta = (thetaindex - 1) * dtheta;
         
+        % Calculate coordinates
         [x1, y1, x2, y2] = thetarho2endpoints(theta, rho, rows, cols); 
         
+        % Calculate cross product to make a line
+        line = cross([x1,y1,1]',[x2,y2,1]');
+        line = line ./ sqrt(line(1)^2 + line(2)^2);
+        lines(n,:) = line;
+        
     end
+    
+    % Dilation... 
 end

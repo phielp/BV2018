@@ -42,3 +42,34 @@ imshow(houghImage,[]);
 title('Hough transform on box image');
 
 %% Exercise 3
+% parameters
+Thresh = [0.1, 0.9];
+thresh = 50;
+nrho = 250;
+ntheta = 250;
+
+% Use shapes.png image
+shapes = rgb2gray(im2double(imread('attachments/shapes.png')));
+
+% Do hough transform
+h = hough(shapes, Thresh, nrho, ntheta);
+
+% Estime hough lines
+lines = houghlines(shapes, h, thresh);
+
+% Plot lines
+figure;
+subplot(1,2,1)
+imshow(shapes);
+
+subplot(1,2,2);
+hold on
+for i = 1:size(lines, 1)
+    line = lines(i,:);
+    x1 = 0;
+    y1 = (-line(1) * x1 - line(3)) / line(2);
+    x2 = size(shapes, 2);
+    y2 = (-line(1) * x2 - line(3)) / line(2);
+    plot([x1 x2], [y1 y2], 'Color', 'r');
+end
+hold off
