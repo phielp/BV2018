@@ -21,13 +21,13 @@ function accumulator = hough(im , Thresh , nrho , ntheta)
     % Colums and rows
     [rows, cols] = size(im);
     
-    rhomax = sqrt(rows^2 +cols^2); % The maximum possible value of rho.
-    drho = 2 * rhomax / (nrho-1);       % The increment in rho between successive
-                                        % entries in the accumulator matrix .
-                                        % Remember we go between +- rhomax .
+    rhomax = sqrt(rows^2 +cols^2);          % The maximum possible value of rho.
+    drho = 2 * rhomax / (nrho-1);           % The increment in rho between successive
+                                            % entries in the accumulator matrix .
+                                            % Remember we go between +- rhomax .
     
     dtheta = pi/ ntheta ;                   % The increment in theta between entries .
-    thetas = [0:dtheta:(pi-dtheta)];   % Array of theta values across the
+    thetas = [0:dtheta:(pi-dtheta)];        % Array of theta values across the
                                             % accumulator matrix .
     
     % Detect edges using the canny edge method in the image with specified threshholds 

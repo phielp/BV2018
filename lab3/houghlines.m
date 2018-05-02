@@ -18,9 +18,8 @@ function [lines] = houghlines(im, h, thresh)
     
     % Calculate drho and dtheta
     [nrho, ntheta] = size(h);
-    
-    drho = 2* rhomax /( nrho -1);       
-    dtheta = pi/ ntheta ;                 
+    drho = 2 * rhomax / (nrho -1);       
+    dtheta = pi / ntheta;                 
     
     % Apply the threshold to the entire image
     h(h < thresh) = 0;
@@ -51,9 +50,6 @@ function [lines] = houghlines(im, h, thresh)
         % Calculate cross product to make a line
         line = cross([x1,y1,1]',[x2,y2,1]');
         line = line ./ sqrt(line(1)^2 + line(2)^2);
-        lines(n,:) = line;
-        
+        lines(n,:) = line;       
     end
-    
-    % Dilation... 
 end
