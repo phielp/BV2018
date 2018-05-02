@@ -1,4 +1,4 @@
-function h = hough (im , Thresh , nrho , ntheta )
+function accumulator = hough(im , Thresh , nrho , ntheta)
     % HOUGH
     %
     % Function takes a grey scale image , constructs an edge map by applying
@@ -21,32 +21,28 @@ function h = hough (im , Thresh , nrho , ntheta )
     % Colums and rows
     [rows, cols] = size(im);
     
-    rhomax = sqrt ( rows ^2 + cols ^2); % The maximum possible value of rho.
-    drho = 2* rhomax /( nrho -1);       % The increment in rho between successive
+    rhomax = sqrt(rows^2 +cols^2); % The maximum possible value of rho.
+    drho = 2 * rhomax / (nrho-1);       % The increment in rho between successive
                                         % entries in the accumulator matrix .
                                         % Remember we go between +- rhomax .
     
     dtheta = pi/ ntheta ;                   % The increment in theta between entries .
-    thetas = [0: dtheta :(pi - dtheta )];   % Array of theta values across the
+    thetas = [0:dtheta:(pi-dtheta)];   % Array of theta values across the
                                             % accumulator matrix .
     
     % Detect edges using the canny edge method in the image with specified threshholds 
-    imageEdges = edge(im,'canny', Thresh);
+    points = edge(im,'canny', Thresh);
     
     % Create empty accumulator
-    accumulatorArray = zeros(nrho,ntheta);
-    
-    [x, y] = find(imageEdges);
-    for i=1:length(x)
-        for j=1:length(thetas)
-            rho = x(i)*sin(thetas(j))-y(i)*cos(thetas(j));
-            
-            rhoindex = round (rho/ drho + nrho /2);
-            thetaindex = round ( thetas(j) / dtheta + 1);  
-            
-            accumulatorArray(rhoindex,thetaindex) = accumulatorArray(rhoindex,thetaindex)+1;
+    accumulator = zeros(nrho,ntheta);
+    [y, x] = find(points);
+    for i = [x';y']
+        for theta = thetas
+            rho = i(1) * sin(theta) - i(2) * cos(theta);
+            rhoindex = round(rho/drho + nrho/2);
+            thetaindex = round(theta/dtheta +1);
+            accumulator(rhoindex, thetaindex) =...
+                accumulator(rhoindex, thetaindex) + 1;
         end
     end
-    
-    h = accumulatorArray;
 end
