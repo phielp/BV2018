@@ -73,8 +73,9 @@ title('houghlines using label')
 hold off
 
 %% houghlines with dilation
+
 figure;
-h = hough(shapes, [-0.9,0.9],300, 300);
+h = hough(shapes, [-0.9,0.9], 300, 300);
 thresh = 0.4
 
 imshow(shapes);
@@ -84,3 +85,43 @@ title('houghlines using dilation')
 hold off
 
 %% Exercise 5
+
+% Restructure results of find
+[x,y] = find(h);
+edge_points = [x,y];
+% Loop over end points
+hold on
+for i = 1:length(coords)
+    % Get the cross product of the two end point vectors
+    cross_vector = cross([coords(i,1),coords(i,2),1], [coords(i,3),coords(i,4),1]);
+    norm_cross_prod = cross_vector/norm(cross_vector);
+    % Calculate the line points
+    line_points = points_of_line(edge_points, norm_cross_prod, 1);
+    % Least square fit of line points
+    line = line_through_points(line_points);
+    plot(line)
+end
+hold off
+
+%% Exercise 6
+    
+h = hough(box, [-0.9,0.9],300, 300);
+
+% show original image
+imshow(box);
+hold on
+coords = houghlines2(box, h, 0.4);
+hold off
+
+
+
+
+
+
+
+
+
+
+
+
+
