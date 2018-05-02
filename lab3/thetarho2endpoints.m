@@ -1,14 +1,17 @@
-function [x1,x2,y1,y2] = thetarho2endpoints(theta, rho, rows, cols)
+% Draw the lines
+function [x1, y1, x2, y2] = thetarho2endpoints(theta, rho, rows, cols)
+    
+    % If line is close to horizontal
     x1 = 0;
-    y1 = (x1 * sin(theta) - rho) / cos(theta);
+    y1 = -rho / cos(theta);
     x2 = cols;
-    y2 = (x2 * sin(theta) - rho) / cos(theta);
-
-    % Check if almost vertical (if so y = rows)
-    if abs(y2 - y1) > cols
+    y2 = (x2 * sin(theta)-rho) / cos(theta);
+    
+    % If line is close to vertical
+    if y2-y1 > rows
         y1 = 0;
-        x1 = (rho + y1 * cos(theta)) / sin(theta);
+        x1 = rho / sin(theta);
         y2 = rows;
-        x2 = (rho + y2 * cos(theta)) / sin(theta);
-    end
+        x2 = (y2 * cos(theta)+rho) / sin(theta);
+    end    
 end

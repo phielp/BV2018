@@ -59,10 +59,7 @@ lines = houghlines(shapes, h, thresh);
 
 % Plot lines
 figure;
-subplot(1,2,1)
 imshow(shapes);
-
-subplot(1,2,2);
 hold on
 for i = 1:size(lines, 1)
     line = lines(i,:);
