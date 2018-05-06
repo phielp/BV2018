@@ -52,4 +52,8 @@ function [lines] = houghlines(im, h, thresh)
         line = line ./ sqrt(line(1)^2 + line(2)^2);
         lines(n,:) = line;       
     end
+<<<<<<< Updated upstream
+=======
+    
+>>>>>>> Stashed changes
 end
