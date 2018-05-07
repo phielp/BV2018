@@ -1,16 +1,13 @@
-% This function is an alteration of demo_mosaic. It allows for
-% more than four input points, using createProjectionMatrix from lab 1.
-
 function mosaic(xy, xaya)
 
     % load images
     f1 = imread('nachtwacht1.jpg');
     f2 = imread('nachtwacht2.jpg');
     
-    M = createProjectionMatrix(xy', xaya');
+    M = createProjectionMatrix(xy', xaya')';
     
-    T = maketform('projective', M);
-    
+    % Normalise the projection matrix before maketform
+    T = maketform('projective', M ./ M(3,3));
     [x y] = tformfwd(T,[1 size(f1,2)], [1 size(f1,1)]);
 
     xdata = [min(1,x(1)) max(size(f2,2),x(2))];

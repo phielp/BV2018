@@ -9,10 +9,10 @@ function demo_mosaic(n_points)
 
     [xy, xaya] = pickmatchingpoints(f1, f2, n_points, 1)
     
-    M = createProjectionMatrix(xy', xaya');
+    M = createProjectionMatrix(xy', xaya')';
     
-    T = maketform('projective', M);
-    
+    % Normalise the projection matrix before maketform
+    T = maketform('projective', M ./ M(3,3));
     [x y] = tformfwd(T,[1 size(f1,2)], [1 size(f1,1)]);
 
     xdata = [min(1,x(1)) max(size(f2,2),x(2))];
@@ -20,4 +20,5 @@ function demo_mosaic(n_points)
     f12 = imtransform(f1,T,'Xdata',xdata,'YData',ydata);
     f22 = imtransform(f2, maketform('affine', [1 0 0; 0 1 0; 0 0 1]), 'Xdata',xdata,'YData',ydata);
     subplot(1,1,1);
+    
     imshow(max(f12,f22));
