@@ -1,3 +1,6 @@
+%%
+% run('/home/philip/Documents/MATLAB/vlfeat-0.9.21/toolbox/vl_setup.m')
+
 %% Exercise 2
 % The createProjectionMatrix code was used to project the images
 demo_mosaic(4);
@@ -14,11 +17,13 @@ nw2 = rgb2gray(imread('nachtwacht2.jpg'));
 
 % find matches
 [matches, scores] = vl_ubcmatch(desc1, desc2);
-    
+
 % get the coordinates
 m1 = matches(1,:);
+% m1
 m1coords = frame1(:,m1);
 m1coords = m1coords(1:2,:);
+% m1coords
 m2 = matches(2,:);
 m2coords = frame2(:,m2);
 m2coords = m2coords(1:2,:);
@@ -39,7 +44,8 @@ for i = 1:length(m2coords)
 end
 title('nachtwacht2.jpg');
 
-% Mosaic images
+
+%% Mosaic images
 figure('name', "N mosaic tests with random chosen features");
 N = 10;
 for t=1:N
@@ -63,3 +69,36 @@ result
 filter = fspecial('log',[3 3],0.5);
 filtered_img=imfilter(image,filter,'conv'); 
 imshow(filtered_img);
+
+%% Plot keypoint descriptors
+figure('position', [75, 50, 1800, 900])
+% Plot Nachtwacht1
+subplot(1,2,1);
+imshow(nw1,'InitialMagnification','fit');
+labels = cellstr(num2str([1:length(frame1)]'));
+hold on
+for i=1:length(frame1)
+    % get keypoint descriptor
+    point = frame1(1:4,i);
+    % plot keypoint descriptor
+    plotDescriptor(point(1), point(2), point(3), point(4));
+    % plot labels
+    text(point(1), point(2), labels(i));
+end
+hold off
+
+% Plot Nachtwacht2
+subplot(1,2,2);
+imshow(nw2,'InitialMagnification','fit');
+labels = cellstr(num2str([1:length(frame2)]'));
+hold on
+for i=1:length(frame2)
+    % get keypoint descriptor
+    point = frame2(1:4,i);
+    % plot keypoint descriptor
+    plotDescriptor(point(1), point(2), point(3), point(4));
+    % plot labels
+    text(point(1), point(2), labels(i));
+end
+hold off
+  
