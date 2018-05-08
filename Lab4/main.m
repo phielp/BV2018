@@ -1,11 +1,8 @@
-%%
-% run('/home/philip/Documents/MATLAB/vlfeat-0.9.21/toolbox/vl_setup.m')
-
-%% Exercise 2
+%% Exercise 2 - Projectivity
 % The createProjectionMatrix code was used to project the images
 demo_mosaic(4);
 
-%% Exercise 3
+%% Exercise 3 - SIFT
 
 % load images
 nw1 = rgb2gray(imread('nachtwacht1.jpg'));
@@ -58,6 +55,9 @@ for t=1:N
     % create mosaic
     mosaic(matchA, matchB);
 end
+
+%% Exercise 4 - RANSAC
+
 %% LoG
 x = 2;
 y = 3;
