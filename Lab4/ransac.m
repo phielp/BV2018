@@ -1,58 +1,75 @@
-function ransac()
+function [bestModel] = ransac(d1, d2, minPoints, iterations, fitThreshold, succesThreshold)
+    % *The following description of parameters has been obtained from
+    % https://en.wikipedia.org/wiki/Random_sample_consensus*
+    % 
+    % Given:
+    %     data – a set of observed data points
+    %     minPoints – minimum number of data points required to fit the model
+    %     iterations – maximum number of iterations allowed in the algorithm
+    %     fitThreshold – threshold value to determine when a data point fits a model
+    %     succesThreshold – number of close data points required to assert that a model fits well to data
+    % 
+    % Return:
+    %     bestfit – model parameters which best fit the data (or nul if no good model is found)
 
-% AUTORIGHTS
+    bestModel = [];
+    bestError = 100000; % the goal is to minimize this error
 
-im1 = imread(fullfile(vl_root, 'data', 'river1.jpg')) ;
-im2 = imread(fullfile(vl_root, 'data', 'river2.jpg')) ;
+    % Go through the amount of iterations
+    for i = 1:iterations
+        % Randomly select points from data
+        randomIndexes = randperm(minPoints,length(d1(1)));
+        xy = d1(:,randomIndexes);
+        xaya = d2(:,randomIndexes);
 
-% make single
-im1 = im2single(im1) ;
-im2 = im2single(im2) ;
+        % Inliers to which we will add points later
+        inliers = randomIndexes;
 
-% make grayscale
-if size(im1,3) > 1, im1g = rgb2gray(im1) ; else im1g = im1 ; end
-if size(im2,3) > 1, im2g = rgb2gray(im2) ; else im2g = im2 ; end
+        % Create model projection (and convert it to TSTRUCT)
+        M = createProjectionMatrix(xy', xaya')';
+        M = maketform('projective', M ./ M(3,3));
 
-% --------------------------------------------------------------------
-%                                                         SIFT matches
-% --------------------------------------------------------------------
+        % Go through all features and check if eucladian distance is smaller
+        % then fitThreshold
+        for featureIndex = 1:length(d1)
 
-[f1,d1] = vl_sift(im1g) ;
-[f2,d2] = vl_sift(im2g) ;
+            % Only check features which the model is not fitted to
+            if ~ismember(featureIndex, randomIndexes)
+               % Do feature projection
+               projected = tformfwd(M,d1(featureIndex), d2(featureIndex));
 
-[matches, scores] = vl_ubcmatch(d1,d2) ;
+               % Calculate euclidean distance
+               euclideanDistance = sqrt(sum((d2(featureIndex) - projected).^2));
 
-numMatches = size(matches,2) ;
+               % If it is an inlier we add it
+               if euclideanDistance < fitThreshold
+                   inliers = [inliers featureIndex];
+               end
+            end
+        end
+        
+        % if we have reached enough inliers for our threshold
+        if length(inliers) > succesThreshold
+            % Get all the new inlier points
+            xy = d1(:, inliers);
+            xaya = d2(:, inliers); 
 
-X1 = f1(1:2,matches(1,:)) ; X1(3,:) = 1 ;
-X2 = f2(1:2,matches(2,:)) ; X2(3,:) = 1 ;
+            % Create the new model
+            M = createProjectionMatrix(xy', xaya')';
+            M = maketform('projective', M ./ M(3,3));
 
-% --------------------------------------------------------------------
-%                                         RANSAC with homography model
-% --------------------------------------------------------------------
+            % Create the new projection
+            projected = tformfwd(M, xy, xaya);
 
-clear H score ok ;
-for t = 1:100
-  % estimate homograpyh
-  subset = vl_colsubset(1:numMatches, 4) ;
-  A = [] ;
-  for i = subset
-    A = cat(1, A, kron(X1(:,i)', vl_hat(X2(:,i)))) ;
-  end
-  [U,S,V] = svd(A) ;
-  H{t} = reshape(V(:,9),3,3) ;
+            % Calculate the error (using euclidean)
+            error = sum(sqrt(sum((xaya - projected).^2)));
 
-  % score homography
-  X2_ = H{t} * X1 ;
-  du = X2_(1,:)./X2_(3,:) - X2(1,:)./X2(3,:) ;
-  dv = X2_(2,:)./X2_(3,:) - X2(2,:)./X2(3,:) ;
-  ok{t} = (du.*du + dv.*dv) < 6*6 ;
-  score(t) = sum(ok{t}) ;
-end
-
-[score, best] = max(score) ;
-H = H{best} ;
-ok = ok{best}; 
-
-
+            % If the error is smaller then our best error we have a new best
+            % model
+            if error < bestError
+                bestModel = M;
+                bestError = error;
+            end
+        end
+    end
 end

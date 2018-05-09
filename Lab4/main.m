@@ -58,6 +58,15 @@ end
 
 %% Exercise 4 - RANSAC
 
+% Parameters
+minPoints = 8;
+iterations = 40;
+fitThreshold = 50;
+succesThreshold = 13;
+
+% RANSAC result
+optimalModel = ransac(m1coords, m2coords, minPoints, iterations, fitThreshold, succesThreshold)
+optimalMosaic(optimalModel);
 %% LoG
 x = 2;
 y = 3;
