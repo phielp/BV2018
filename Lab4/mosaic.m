@@ -1,4 +1,4 @@
-function mosaic(xy, xaya)
+function T = mosaic(xy, xaya)
 
     % load images
     f1 = imread('nachtwacht1.jpg');

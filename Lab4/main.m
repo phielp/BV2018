@@ -15,12 +15,10 @@ nw2 = rgb2gray(imread('nachtwacht2.jpg'));
 % find matches
 [matches, scores] = vl_ubcmatch(desc1, desc2);
 
-% get the coordinates
+% Get the coordinates for keypoints from first and second image
 m1 = matches(1,:);
-% m1
 m1coords = frame1(:,m1);
 m1coords = m1coords(1:2,:);
-% m1coords
 m2 = matches(2,:);
 m2coords = frame2(:,m2);
 m2coords = m2coords(1:2,:);
@@ -47,13 +45,26 @@ figure('name', "N mosaic tests with random chosen features");
 N = 10;
 for t=1:N
     subplot(2,N/2,t);
+    
     % Filter some random features features
     randArray = randi([1 40],1,10);
     matchA = m1coords(:,randArray(1:10));
     matchB = m2coords(:,randArray(1:10));
 
-    % create mosaic
-    mosaic(matchA, matchB);
+    % Create mosaic (and return projection matrix)
+    projectionMatrix = mosaic(matchA, matchB);
+    
+    % Gather all features which were not used for the projection
+    remainingIndexes = setdiff(1:40,randArray(1:10));
+    
+    % Project all remaining features
+    projectedPoints = tformfwd(projectionMatrix, m1coords(:,remainingIndexes), m2coords(:,remainingIndexes));
+    
+    % Calculate the distance using euclidean
+    distance = sum(sqrt(sum((m2coords(:,remainingIndexes) - projectedPoints).^2)));
+    
+    % Set the distance as the title
+    title(distance(2))
 end
 
 %% Exercise 4 - RANSAC
@@ -67,19 +78,9 @@ succesThreshold = 13;
 % RANSAC result
 optimalModel = ransac(m1coords, m2coords, minPoints, iterations, fitThreshold, succesThreshold)
 optimalMosaic(optimalModel);
-%% LoG
-x = 2;
-y = 3;
-t = 0;
 
-result = (1 / (2*pi*t)) * exp(-(x^2 + y^2) / 2*t);
-result
+%% Util functions for plotting keypoint descriptors
 
-filter = fspecial('log',[3 3],0.5);
-filtered_img=imfilter(image,filter,'conv'); 
-imshow(filtered_img);
-
-%% Plot keypoint descriptors
 figure('position', [75, 50, 1800, 900])
 % Plot Nachtwacht1
 subplot(1,2,1);
