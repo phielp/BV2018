@@ -13,7 +13,7 @@ function [bestModel] = ransac(d1, d2, minPoints, iterations, fitThreshold, succe
     %     bestfit – model parameters which best fit the data (or nul if no good model is found)
 
     bestModel = [];
-    bestError = 100000; % the goal is to minimize this error
+    bestError = inf(); % the goal is to minimize this error
 
     % Go through the amount of iterations
     for i = 1:iterations
@@ -39,10 +39,10 @@ function [bestModel] = ransac(d1, d2, minPoints, iterations, fitThreshold, succe
                projected = tformfwd(M,d1(featureIndex), d2(featureIndex));
 
                % Calculate euclidean distance
-               euclideanDistance = sqrt(sum((d2(featureIndex) - projected).^2));
+               ed = euclideanDistance(d2(featureIndex), projected);
 
                % If it is an inlier we add it
-               if euclideanDistance < fitThreshold
+               if ed < fitThreshold
                    inliers = [inliers featureIndex];
                end
             end
@@ -62,7 +62,7 @@ function [bestModel] = ransac(d1, d2, minPoints, iterations, fitThreshold, succe
             projected = tformfwd(M, xy, xaya);
 
             % Calculate the error (using euclidean)
-            error = sum(sqrt(sum((xaya - projected).^2)));
+            error = euclideanDistance(xaya, projected);
 
             % If the error is smaller then our best error we have a new best
             % model
@@ -72,4 +72,6 @@ function [bestModel] = ransac(d1, d2, minPoints, iterations, fitThreshold, succe
             end
         end
     end
+    
+    fprintf('the best error is : %d', bestError);
 end

@@ -61,22 +61,22 @@ for t=1:N
     projectedPoints = tformfwd(projectionMatrix, m1coords(:,remainingIndexes), m2coords(:,remainingIndexes));
     
     % Calculate the distance using euclidean
-    distance = sum(sqrt(sum((m2coords(:,remainingIndexes) - projectedPoints).^2)));
+    distance = euclideanDistance(m2coords(:,remainingIndexes),projectedPoints);
     
     % Set the distance as the title
-    title(distance(2))
+    title(distance)
 end
 
 %% Exercise 4 - RANSAC
 
 % Parameters
-minPoints = 8;
-iterations = 40;
-fitThreshold = 50;
-succesThreshold = 13;
+minPoints = 6;
+iterations = 50;
+fitThreshold = 600;
+succesThreshold = 10;
 
 % RANSAC result
-optimalModel = ransac(m1coords, m2coords, minPoints, iterations, fitThreshold, succesThreshold)
+optimalModel = ransac(m1coords, m2coords, minPoints, iterations, fitThreshold, succesThreshold);
 optimalMosaic(optimalModel);
 
 %% Util functions for plotting keypoint descriptors
