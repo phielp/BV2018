@@ -1,16 +1,15 @@
 function [bestModel] = ransac(d1, d2, minPoints, iterations, fitThreshold, succesThreshold)
     % *The following description of parameters has been obtained from
-    % https://en.wikipedia.org/wiki/Random_sample_consensus*
     % 
     % Given:
-    %     data – a set of observed data points
-    %     minPoints – minimum number of data points required to fit the model
-    %     iterations – maximum number of iterations allowed in the algorithm
-    %     fitThreshold – threshold value to determine when a data point fits a model
-    %     succesThreshold – number of close data points required to assert that a model fits well to data
+    %     data ï¿½ a set of observed data points
+    %     minPoints ï¿½ minimum number of data points required to fit the model
+    %     iterations ï¿½ maximum number of iterations allowed in the algorithm
+    %     fitThreshold ï¿½ threshold value to determine when a data point fits a model
+    %     succesThreshold ï¿½ number of close data points required to assert that a model fits well to data
     % 
     % Return:
-    %     bestfit – model parameters which best fit the data (or nul if no good model is found)
+    %     bestfit ï¿½ model parameters which best fit the data (or nul if no good model is found)
 
     bestModel = [];
     bestError = inf(); % the goal is to minimize this error
