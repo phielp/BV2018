@@ -1,6 +1,13 @@
+%% Lab 4
+%
+% Philip Bouman (10668667) & Jonas van Oenen (10670947)
+%
+% The code can be run by running the sections corresponding to the lab 
+% questions.
+
 %% Exercise 2 - Projectivity
 % The createProjectionMatrix code was used to project the images
-demo_mosaic(4);
+demo_mosaic(6);
 
 %% Exercise 3 - SIFT
 
@@ -38,7 +45,6 @@ for i = 1:length(m2coords)
     text(m2coords(1, i), m2coords(2,i), sprintf('%02d',i), 'Color', 'green');
 end
 title('nachtwacht2.jpg');
-
 
 %% Mosaic images
 figure('name', "N mosaic tests with random chosen features");
@@ -78,6 +84,28 @@ succesThreshold = 10;
 % RANSAC result
 optimalModel = ransac(m1coords, m2coords, minPoints, iterations, fitThreshold, succesThreshold);
 optimalMosaic(optimalModel);
+
+%% Exercise 4 - RANSAC
+
+% parameters
+n_points = 8;
+error = 1;
+iter = 10;
+thresh = 0.5;
+
+% find best fit using RANSAC and transform
+fit = ransac2(f1, f2, n_points, error, iter, thresh)';
+T = maketform('projective', fit);
+
+% visualize (from demo_mosaic.m)
+[x y] = tformfwd(T,[1 size(f1,2)], [1 size(f1,1)]);
+
+xdata = [min(1,x(1)) max(size(f2,2),x(2))];
+ydata = [min(1,y(1)) max(size(f2,1),y(2))];
+f12 = imtransform(f1,T,'Xdata',xdata,'YData',ydata);
+f22 = imtransform(f2, maketform('affine', [1 0 0; 0 1 0; 0 0 1]), 'Xdata',xdata,'YData',ydata);
+figure('name','RANSAC Mosaic');
+imshow(max(f12,f22));
 
 %% Util functions for plotting keypoint descriptors
 

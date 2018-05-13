@@ -1,3 +1,5 @@
+% Function to plot keypoint descriptors
+% (x-coord, y-coord, radius, angle)
 function plotDescriptor(x0,y0,r,theta)
     ang = 0:0.01:2*pi; 
     xp = r * cos(ang);
