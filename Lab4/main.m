@@ -75,18 +75,6 @@ end
 
 %% Exercise 4 - RANSAC
 
-% Parameters
-minPoints = 6;
-iterations = 50;
-fitThreshold = 600;
-succesThreshold = 10;
-
-% RANSAC result
-optimalModel = ransac(m1coords, m2coords, minPoints, iterations, fitThreshold, succesThreshold);
-optimalMosaic(optimalModel);
-
-%% Exercise 4 - RANSAC
-
 % parameters
 n_points = 8;
 error = 1;
