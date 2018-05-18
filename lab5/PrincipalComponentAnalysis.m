@@ -1,22 +1,24 @@
-function [components, variances] = PrincipalComponentAnalysis(data, dimensions)
+function [projectedData, components, eigenValues] = PrincipalComponentAnalysis(data, dimensions)
     [~,n] = size(data);
     
     % Calculate the mean and standard deviation
-    meanData = mean(data, dimensions); % Every column is mean for all 300 images on that pixel
+    meanData = mean(data, 2); % Every column is mean for all 300 images on that pixel
     
     % Substract the mean from our images
     centeredData = data - repmat(meanData,1, n);
-     
-    % normalize
     normalized = centeredData' / sqrt(n);
     
     % Calculate svd
-    [~,S,V] = svd(normalized);
+    [~,S,components] = svd(normalized);
     
-    % Variances
+    % Eigenvalues
     S = diag(S);
-    variances = S .* S;
+    eigenValues = S .* S;
     
-    % project
-    components = (V' * centeredData)';
+    % project our data 
+    projectedData = (components' * centeredData)';
+    
+    % Return only the asked dimensions
+    components = components(:,1:dimensions);
+   
 end

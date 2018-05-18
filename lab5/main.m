@@ -14,9 +14,9 @@ for i=1:length(images)
     end
 end
 
-%% PCA Matlab
+%% PCA Matlab - this uses the built in matlab pca method
 % NumComponents set the dimensionality of the coefficients
-[coeff, ~, eigenvalues] = pca(train_set, 'NumComponents', 50);
+[coeff, components, eigenvalues] = pca(train_set, 'NumComponents', 20);
 for i = 1:size(coeff, 2)
     coeff(:, i) = coeff(:, i)/max(coeff(:, i));
 end
@@ -34,17 +34,16 @@ plot(eigenvalues(1:50));
 title("First 50 eigenvalues")
 
 %% PCA implementation
-figure;
-[coeff, eigenvalues] = PrincipalComponentAnalysis(train_set, 2);
-for i = 1:size(coeff, 2)
-    coeff(:, i) = coeff(:, i)/max(coeff(:, i));
+[projectedData, components, eigenvalues] = PrincipalComponentAnalysis(train_set, 50);
+for i = 1:size(projectedData, 2)
+    projectedData(:, i) = projectedData(:, i)/max(projectedData(:, i));
 end
 
 % Plot 9 PCA vectors as images
 figure;
 for i = 1:9
     subplot(2,5,i)
-    imshow(reshape(coeff(:, i), 112, 150));
+    imshow(reshape(projectedData(:, i), 112, 150));
 end
 
 % Plot the first 50 eigenvalues
@@ -58,7 +57,7 @@ r1 = NaiveImageCorrelation(train_set);
 toc
 
 tic
-r2 = pcaImageCorrelation(train_set, coeff);
+r2 = pcaImageCorrelation(projectedData', components);
 toc
 
 % Print 5 results for naive correlation
@@ -94,6 +93,8 @@ end
 imagestruct = [ images{:}];
 positions = vertcat ( imagestruct . position );
 
+
+%% ****HELPER FUNCTIONS FOR CORRELATION****
 %% Naive immage correlation
 function [naive_image_correlations] = NaiveImageCorrelation(train_set)
     l = length(train_set(:,1));
@@ -124,7 +125,7 @@ function [naive_image_correlations] = NaiveImageCorrelation(train_set)
 end
 
 %% PCA image correlation
-function [pca_image_correlations] = pcaImageCorrelation(train_set, coeff)
+function [pca_image_correlations] = pcaImageCorrelation(train_set, pc)
     l = length(train_set(:,1));
     pca_image_correlations = [1:l;ones(1,l)]';
     for i=1:l
@@ -133,12 +134,12 @@ function [pca_image_correlations] = pcaImageCorrelation(train_set, coeff)
         best_match = 0;
 
         % Compare image to all other images in set
-        for j=1:size(coeff,2)
-            comparisonImage = coeff(:,j);
+        for j=1:l
+            comparisonImage = pc(j,:);
 
             % Check if the images are not the same
             if j~=i
-                sim = dot(image', comparisonImage); %similarity
+                sim = dot(image(1:length(pc(1,:)))', comparisonImage); %similarity
 
                 % Check if the new similarity is the best
                 if sim > best_sim
