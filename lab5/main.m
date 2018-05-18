@@ -87,20 +87,20 @@ tic
 l = length(train_set(:,1));
 image_correlations = [1:l;ones(1,l)]';
 for i=1:l
-    image = coeff(:,i);
+    image = train_set(i,:);
     best_sim = 0;
     best_match = 0;
     
     % Compare image to all other images in set
-    for j=1:l
-        comparisonImage = train_set(j,:);
+    for j=1:size(coeff,2)
+        comparisonImage = coeff(:,j);
         
         % Check if the images are not the same
         if j~=i
             sim = dot(image, comparisonImage); %similarity
             
             % Check if the new similarity is the best
-            if sim > best_sim
+            if sim < best_sim
                 best_match = j;
                 best_sim = sim;
             end
@@ -110,6 +110,7 @@ for i=1:l
     image_correlations(i,2) = best_match;
 end
 toc
+
 %% Positioning with Nearest Neigbour
 imagestruct = [ images{:}];
 positions = vertcat ( imagestruct . position );
